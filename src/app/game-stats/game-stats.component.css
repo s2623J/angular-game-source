@@ -1,0 +1,33 @@
+body.modalBody {
+  font-size: 1.5rem;
+  font-family: arial;
+  color: gray !important;
+  background: white;
+  text-align: center;
+}
+
+span{
+  float: right;
+  cursor: pointer;
+}
+
+/* The Modal Close Button */
+.close {
+  color: #000;
+  font-size: 17px;
+  font-weight: bold;
+  border-radius: 14px;
+  background: white;
+}
+
+.close:hover,
+.close:focus {
+  text-decoration: none;
+  cursor: pointer;
+  background: #d2d2d2;
+}
+
+.modalW-body {
+  padding: 10px 10px;
+  min-height: 50px;
+}
