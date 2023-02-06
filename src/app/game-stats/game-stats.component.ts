@@ -18,8 +18,13 @@ export class GameStatsComponent {
   selectedTeam?: Team;
   selectedValue: string = '12 ';
 
-  @ViewChild('teamStats') stats!: ElementRef;
+  @ViewChild('teamStats') teamStats!: ElementRef;
+  @ViewChild('teamStatsComp') teamStatsComp!: TeamStatsComponent
 
+  /**
+   * Fetches all teams into multiple arrays
+   * @param nbaService 
+   */
   constructor(protected nbaService: NbaService) {
     this.teams$ = nbaService.getAllTeams().pipe(
       tap(data => {
@@ -34,6 +39,11 @@ export class GameStatsComponent {
     )
   }
 
+  /**
+   * Adds and persists selected team to service
+   * @param teamId
+   * @param filteredForm
+   */
   trackTeam(teamId: string, filteredForm: HTMLFormElement): void {
     const formChildren = filteredForm.children;
     const selectArr = [formChildren[0], formChildren[1], formChildren[2]];
@@ -46,6 +56,11 @@ export class GameStatsComponent {
     }
   }
 
+  /**
+   * Filters to a single team based on a potential range of selections
+   * @param selectBox 
+   * @param filteredForm 
+   */
   filterTeams(selectBox: HTMLSelectElement, filteredForm: HTMLFormElement) {
     const formChildren = filteredForm.children;
     const selectArr = [formChildren[0], formChildren[1], formChildren[2]];
@@ -80,6 +95,10 @@ export class GameStatsComponent {
     this.teams$ = of(result);
   }
 
+  /**
+   * Prompts whether, or not, to remove team from tracking
+   * @param event 
+   */
   handleModal(event: Event) {
     let target: HTMLElement = event.target as HTMLElement;
     this.showPopup = false;
@@ -87,27 +106,47 @@ export class GameStatsComponent {
       this.nbaService.removeTrackedTeam(this.selectedTeam);
   }
 
+  /**
+   * Raises modal prompting to remove team from tracking
+   * @param team 
+   */
   handleRemoveTrackedTeam(team: Team) {
     this.showPopup = true;
     this.selectedTeam = team;
   }
-
+  
+  /**
+   * Sets days-of-game-history based on User selection for
+   * ALL displayed teams.
+   * @param event 
+   */
   setSelectionOption(event: Event) {
+    // Sync all selected game histories for ALL queried teams
     let target: HTMLSelectElement = event.target as HTMLSelectElement;
-    console.log('Selected Value: ', target.selectedOptions[0].value);
     this.selectedValue = target.selectedOptions[0].value;
-    this.resetGameHistory();
+    let selVal = Number(this.selectedValue.split(' ')[0]);
+    let teamStatArr: [] = this.teamStats.nativeElement.children;
+    let histSelected = [ 6, 12, 20 ];
+
+    for (let index = 0; index < teamStatArr.length; index++) {
+      const teamStat = teamStatArr[index];
+      let selectElem: HTMLSelectElement = teamStat['children'][0]['children'][2]['children'][0]
+        ['children'][0]['children'][0]['children'][0];
+      if (!!selectElem) {
+        selectElem.selectedIndex =  histSelected.indexOf(selVal);
+        this.teamStatsComp.games$ = this.nbaService.getLastResults(this.teamStatsComp.team, selVal)
+      }
+    }
   }
 
-  resetGameHistory() {
-    // Trying to sync all selected game histories
-    let trackedTeams = this.nbaService.getTrackedTeams();
-    let selVal = Number(this.selectedValue.split(' ')[0]);
-    trackedTeams.forEach(team => {
-      if (this.stats instanceof TeamStatsComponent ) {
-        this.stats.games$ = this.nbaService.getLastResults(team, selVal)
-      }
-    })
+  /**
+   * Tacks changes made to getTrackedTeams() HTML array
+   * @param index 
+   * @param team 
+   * @returns 
+   */
+  trackById(index: number, team: Team): number {
+    return team.id;
   }
 }
 

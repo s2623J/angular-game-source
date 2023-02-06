@@ -12,7 +12,7 @@
         <p>
           Results of past <ng-content select="select"></ng-content> days:
         </p>
-        <p>
+        <p class="games">
           <mark class="tag" *ngFor="let result of stats.lastGames" [class]="result">{{result}}</mark>
         </p>
         <p>Avg pts scored: <strong>{{stats.averagePointsScored}}</strong> </p>

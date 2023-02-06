@@ -30,10 +30,4 @@ export interface Stats {
   lastGames: Result[];
 }
 
-export interface TeamsFilteredBy {
-  "conference": string,
-  "division": string,
-  "teamList": string
-}
-
 export type Result = 'W' | 'L';

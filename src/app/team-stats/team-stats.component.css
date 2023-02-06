@@ -6,10 +6,12 @@
 
 mark.W {
   background-color: green;
+  width: 14px;
 }
 
 mark.L {
   background-color: red;
+  width: 7px;
 }
 
 mark {
@@ -19,4 +21,9 @@ mark {
 
 .card {
   max-width: 100%;
+}
+
+.games {
+  flex-wrap: wrap;
+  display: flex;
 }

@@ -21,8 +21,9 @@
     <button type="submit" class="primary" (click)="trackTeam(teamSelect.value, filteredForm)">Track team</button>
   </form>
 </div>
-<div class="row">
-  <app-team-stats #teamStats class="col-sm-4" *ngFor="let team of nbaService.getTrackedTeams()" [team]="team">
+<div class="row" #teamStats>
+  <app-team-stats #teamStatsComp class="col-sm-4" *ngFor="let team of nbaService.getTrackedTeams(); trackBy: trackById" 
+    [team]="team">
     <span (click)="handleRemoveTrackedTeam(team)">&times;</span>
     <select #daysHistory (change)="setSelectionOption($event)">
       <option name="6" [value]="'6 ' + team.abbreviation" ng-selected="selectedValue.split(' ')[0] === '6'">6</option>
