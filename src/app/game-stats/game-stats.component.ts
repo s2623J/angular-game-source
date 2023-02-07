@@ -1,7 +1,7 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import {Team} from '../data.models';
-import {Observable, tap, of, Subject} from 'rxjs';
-import {NbaService} from '../nba.service';
+import { Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import {  Team} from '../data.models';
+import {  Observable, tap, of } from 'rxjs';
+import {  NbaService } from '../nba.service';
 import { TeamStatsComponent } from '../team-stats/team-stats.component';
 
 @Component({
@@ -16,10 +16,10 @@ export class GameStatsComponent {
   divisions: string[] = [];
   allTeams: Team[] = [];
   selectedTeam?: Team;
-  selectedValue: string = '12 ';
 
-  @ViewChild('teamStats') teamStats!: ElementRef;
-  @ViewChild('teamStatsComp') teamStatsComp!: TeamStatsComponent
+  @ViewChild('teamStatsComp') teamStatsComp!: TeamStatsComponent;
+  @ViewChild('daysHistory') daysHistory!: TeamStatsComponent;
+  @ViewChildren('daysHistory') selectElements!: QueryList<ElementRef>;
 
   /**
    * Fetches all teams into multiple arrays
@@ -123,20 +123,14 @@ export class GameStatsComponent {
   setSelectionOption(event: Event) {
     // Sync all selected game histories for ALL queried teams
     let target: HTMLSelectElement = event.target as HTMLSelectElement;
-    this.selectedValue = target.selectedOptions[0].value;
-    let selVal = Number(this.selectedValue.split(' ')[0]);
-    let teamStatArr: [] = this.teamStats.nativeElement.children;
+    let selectedValue = target.selectedOptions[0].value;
+    let selVal = Number(selectedValue.split(' ')[0]);
     let histSelected = [ 6, 12, 20 ];
 
-    for (let index = 0; index < teamStatArr.length; index++) {
-      const teamStat = teamStatArr[index];
-      let selectElem: HTMLSelectElement = teamStat['children'][0]['children'][2]['children'][0]
-        ['children'][0]['children'][0]['children'][0];
-      if (!!selectElem) {
-        selectElem.selectedIndex =  histSelected.indexOf(selVal);
-        this.teamStatsComp.games$ = this.nbaService.getLastResults(this.teamStatsComp.team, selVal)
-      }
-    }
+    this.selectElements.forEach((selectItem) => {
+      selectItem.nativeElement.selectedIndex =  histSelected.indexOf(selVal);
+      this.teamStatsComp.games$ = this.nbaService.getLastResults(this.teamStatsComp.team, selVal)
+    })
   }
 
   /**
